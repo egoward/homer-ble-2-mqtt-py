@@ -1,0 +1,11 @@
+[Unit]
+Description=BLE to MQTT
+After=multi-user.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/python3 /home/pi/homer-ble-2-mqtt-py/ble2mqtt.py
+
+[Install]
+WantedBy=multi-user.target

@@ -16,13 +16,30 @@ If the messages are going to go further or be persisted messages, you need to wh
 
 On Windows, onstall Python 3.X from MS store, something like:
 
+
+sudo apt-get install python3-pip
+
 ```
-pip3 install bleak
-pip3 install paho-mqtt
-pip3 install asyncio_mqtt
+sudo pip3 install bleak asyncio_mqtt
 ```
 
 Make sure you run it with python3
-
 Change the MQTT connection parameters to ones that work for you.
 
+
+
+Give the 'pi' user access to bluetooth
+```
+sudo usermod -a -G bluetooth pi
+sudo systemctl restart bluetooth
+sudo systemctl restart dbus
+```
+
+
+And/or installation as a service (which runs as root)
+```
+sudo cp ble2mqtt.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable ble2mqtt.service
+sudo systemctl start ble2mqtt.service
+ ```
