@@ -60,12 +60,12 @@ class BLE2MQTT:
           'service_uuids' : advertisement_data.service_uuids
       }
       jsonText = json.dumps(obj4json)
-      await self.try_send("/ble/" + self.hostname + "/device/" + device.address,jsonText)
+      await self.try_send("ble/" + self.hostname + "/device/" + device.address,jsonText)
       self.counter = self.counter + 1
 
   async def heartbeat(self):
     while True:
-      await self.try_send("/ble/"+self.hostname+"/status",json.dumps({'sent':self.counter}))
+      await self.try_send("ble/"+self.hostname+"/status",json.dumps({'sent':self.counter}))
       await asyncio.sleep(self.heartbeat_interval_seconds)
 
 
