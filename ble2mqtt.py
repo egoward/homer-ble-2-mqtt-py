@@ -18,8 +18,7 @@ class BLE2MQTT:
     self.last_connect_time = 0
     self.reconnect_interval_seconds = 10
     self.heartbeat_interval_seconds = 60
-    self.scanner = BleakScanner(scanning_mode='passive')
-    self.scanner.register_detection_callback(self.detection_callback)
+    self.scanner = BleakScanner(detection_callback=self.detection_callback)
   
   async def start(self):
     await self.maybe_connect()
