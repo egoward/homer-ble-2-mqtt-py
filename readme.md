@@ -14,29 +14,25 @@ If the messages are going to go further or be persisted messages, you need to wh
 
 # How do you use it?
 
-On Windows, install Python 3.X from MS store, on linux you could run:
+Clone the repo and run the setup script to create a virtual environment and install dependencies:
 
 ```
-sudo apt-get install python3-pip
+git clone https://github.com/egoward/homer-ble-2-mqtt-py.git
+cd homer-ble-2-mqtt-py
+bash setup.sh
 ```
 
-Then:
-```
-pip3 install bleak asyncio_mqtt
-```
+Change the MQTT connection parameters in `ble2mqtt.py` to ones that work for you.
 
-Make sure you run it with python3.  Change the MQTT connection parameters to ones that work for you.
-
-
-On a pi, give the 'pi' user access to bluetooth
+On a pi (or similar device), give your user access to bluetooth:
 ```
-sudo usermod -a -G bluetooth pi
+sudo usermod -a -G bluetooth me
 sudo systemctl restart bluetooth
 sudo systemctl restart dbus
 ```
 
 
-And/or installation as a service (which runs as root).  Something like:
+And/or installation as a service (which runs as root).  `setup.sh` generates `ble2mqtt.service` with the correct paths for your installation automatically, so run it before copying the service file:
 ```
 sudo cp ble2mqtt.service /etc/systemd/system/
 sudo systemctl daemon-reload
