@@ -32,7 +32,7 @@ sudo systemctl restart dbus
 ```
 
 
-And/or installation as a service (which runs as root).  Something like:
+And/or installation as a service (which runs as root).  `setup.sh` generates `ble2mqtt.service` with the correct paths for your installation automatically, so run it before copying the service file:
 ```
 sudo cp ble2mqtt.service /etc/systemd/system/
 sudo systemctl daemon-reload

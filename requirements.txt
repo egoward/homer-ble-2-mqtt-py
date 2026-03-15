@@ -1,3 +1,2 @@
-asyncio-mqtt
+aiomqtt
 bleak
-paho-mqtt

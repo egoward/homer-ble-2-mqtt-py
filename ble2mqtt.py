@@ -1,7 +1,6 @@
-import sys, json, socket, asyncio, time
+import sys, json, socket, asyncio, contextlib, time
 from bleak import BleakScanner
-import asyncio_mqtt
-import paho.mqtt.client as mqtt
+import aiomqtt
 
 
 if sys.platform == "win32":
@@ -13,7 +12,9 @@ class BLE2MQTT:
     print("Hello")
     self.counter = 0
     self.hostname = socket.gethostname()
-    self.conn = asyncio_mqtt.Client("House")
+    self.mqtt_host = "House"
+    self.conn = None
+    self._exit_stack = contextlib.AsyncExitStack()
     self.last_connect_time = 0
     self.reconnect_interval_seconds = 10
     self.heartbeat_interval_seconds = 60
@@ -22,28 +23,34 @@ class BLE2MQTT:
   
   async def start(self):
     await self.maybe_connect()
-    asyncio.get_event_loop().create_task(self.heartbeat())
+    asyncio.create_task(self.heartbeat())
     await self.scanner.start()
 
   async def maybe_connect(self):
     if time.time() - self.last_connect_time < self.reconnect_interval_seconds:
       return  
     print("Connecting to MQTT")
+    self.last_connect_time = time.time()
     try:
-      self.last_connect_time = time.time()
-      await self.conn.connect()
+      await self._exit_stack.aclose()
+      self._exit_stack = contextlib.AsyncExitStack()
+      self.conn = await self._exit_stack.enter_async_context(aiomqtt.Client(self.mqtt_host))
       print("Connected")
     except BaseException as eConn:
+      self.conn = None
       print("Error Connecting : ", eConn)
 
   async def try_send(self, subject, message):
     print("Message for ", subject, " : " , message)
+    if self.conn is None:
+      await self.maybe_connect()
+      return
     try:
       await self.conn.publish(subject, message)
-    except  asyncio_mqtt.error.MqttCodeError as ePub:
+    except aiomqtt.MqttError as ePub:
       print("Error sending message :  ", ePub)
-      if ePub.rc is mqtt.MQTT_ERR_NO_CONN:
-        await self.maybe_connect()
+      self.conn = None
+      await self.maybe_connect()
 
   async def detection_callback(self,device, advertisement_data):
       global conn, hostname, counter
