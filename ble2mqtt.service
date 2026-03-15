@@ -7,6 +7,7 @@ After=multi-user.target
 [Service]
 Type=simple
 Restart=always
+ExecStartPre=-/usr/sbin/rfkill unblock bluetooth
 ExecStart=/path/to/homer-ble-2-mqtt-py/venv/bin/python3 /path/to/homer-ble-2-mqtt-py/ble2mqtt.py
 
 [Install]

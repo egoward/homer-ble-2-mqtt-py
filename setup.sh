@@ -13,6 +13,7 @@ After=multi-user.target
 [Service]
 Type=simple
 Restart=always
+ExecStartPre=-/usr/sbin/rfkill unblock bluetooth
 ExecStart=${INSTALL_DIR}/venv/bin/python3 ${INSTALL_DIR}/ble2mqtt.py
 
 [Install]
